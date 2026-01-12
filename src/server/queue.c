@@ -15,9 +15,6 @@ void queue_init(job_queue_t *q)
     pthread_cond_init(&q->cond, NULL);
 }
 
-/*
- * Destroy queue and free remaining nodes
- */
 void queue_destroy(job_queue_t *q)
 {
     pthread_mutex_lock(&q->mutex);
@@ -37,9 +34,6 @@ void queue_destroy(job_queue_t *q)
     pthread_cond_destroy(&q->cond);
 }
 
-/*
- * Push job into queue (producer)
- */
 void queue_push(job_queue_t *q, job_packet_t *job)
 {
     job_node_t *node = (job_node_t *)malloc(sizeof(job_node_t));
