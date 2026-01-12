@@ -5,9 +5,7 @@
 
 #include "queue.h"
 
-/*
- * Initialize queue
- */
+
 void queue_init(job_queue_t *q)
 {
     q->head = NULL;
@@ -61,10 +59,7 @@ void queue_push(job_queue_t *q, job_packet_t *job)
     pthread_mutex_unlock(&q->mutex);
 }
 
-/*
- * Pop job from queue (consumer)
- * Blocks until a job is available
- */
+
 int queue_pop(job_queue_t *q, job_packet_t *job)
 {
     pthread_mutex_lock(&q->mutex);

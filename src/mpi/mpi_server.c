@@ -17,12 +17,12 @@ int main(int argc, char **argv)
 
     if (rank == 0) {
         while (1) {
-            /* Receive job from server */
+        
             MPI_Recv(&job, sizeof(job), MPI_BYTE,
                      MPI_ANY_SOURCE, MPI_JOB_TAG,
                      MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-            /* Broadcast job to workers */
+        
             MPI_Bcast(&job, sizeof(job), MPI_BYTE, 0, MPI_COMM_WORLD);
 
             double sum = 0.0;
@@ -37,7 +37,6 @@ int main(int argc, char **argv)
             result.job_id = job.job_id;
             result.result = sum;
 
-            /* Send result back */
             MPI_Send(&result, sizeof(result), MPI_BYTE,
                      MPI_ANY_SOURCE, MPI_RESULT_TAG,
                      MPI_COMM_WORLD);

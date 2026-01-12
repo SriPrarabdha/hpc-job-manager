@@ -9,10 +9,7 @@
 static int shm_fd = -1;
 static shm_region_t *shm_ptr = NULL;
 
-/*
- * Create and map shared memory region
- * Used by server (creator)
- */
+
 shm_region_t* shm_create(size_t size)
 {
     shm_fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
@@ -45,10 +42,7 @@ shm_region_t* shm_create(size_t size)
     return shm_ptr;
 }
 
-/*
- * Attach to existing shared memory
- * Used by MPI leader (if on same node)
- */
+
 shm_region_t* shm_attach(size_t size)
 {
     shm_fd = shm_open(SHM_NAME, O_RDWR, 0666);
@@ -70,9 +64,7 @@ shm_region_t* shm_attach(size_t size)
     return shm_ptr;
 }
 
-/*
- * Cleanup shared memory
- */
+
 void shm_destroy()
 {
     if (shm_ptr) {
@@ -85,6 +77,5 @@ void shm_destroy()
         shm_fd = -1;
     }
 
-    /* Only creator should unlink */
     shm_unlink(SHM_NAME);
 }

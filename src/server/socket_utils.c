@@ -5,8 +5,6 @@
 #include <arpa/inet.h>
 #include "socket_utils.h"
 
-/* ---------- Server-side ---------- */
-
 int create_server_socket(int port)
 {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,8 +41,6 @@ int accept_client(int server_fd)
     return accept(server_fd, NULL, NULL);
 }
 
-/* ---------- Client-side ---------- */
-
 int connect_to_server(const char *host, int port)
 {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -66,8 +62,6 @@ int connect_to_server(const char *host, int port)
 
     return fd;
 }
-
-/* ---------- Data transfer ---------- */
 
 int send_job(int sockfd, const job_packet_t *job)
 {
