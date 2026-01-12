@@ -2,7 +2,6 @@
 #include <mpi.h>
 #include "common.h"
 #include "compute.h"
-#include "server_threads.h"
 #include "mpi_protocol.h"
 
 int main(int argc, char **argv)
