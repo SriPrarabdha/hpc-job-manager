@@ -15,6 +15,13 @@ squeue
 
 scancel 82
 
+
+srun --nodes=2 --ntasks=2 --pty bash --norc --noprofile
+bash-5.2$ srun --nodes=1 --ntasks=2 ./build/server &
+[1] 2116
+bash-5.2$ ss -lnt | grep 9090
+
+
  -->
 > [!IMPORTANT]
 > A client submits a compute request, the server queues it using POSIX shared memory and pthreads, dispatches it to an MPI master–worker pool running under Slurm, aggregates the results, and returns them to the client.
