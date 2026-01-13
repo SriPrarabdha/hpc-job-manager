@@ -2,8 +2,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <mpi.h>
+
 #include "server_threads.h"
 #include "mpi_protocol.h"
+#include "common.h"
 
 void* mpi_thread_fn(void *arg)
 {
@@ -11,21 +13,40 @@ void* mpi_thread_fn(void *arg)
     job_queue_t *queue = args->queue;
     shm_region_t *shm = args->shm;
 
+    int rank, size;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    /* This thread must run ONLY on rank 0 */
+    if (rank != 0) {
+        return NULL;
+    }
+
     while (1) {
         job_packet_t job;
         queue_pop(queue, &job);
 
-        shm->job = job;
-        shm->job_ready = 1;
+        /* Broadcast job to workers */
+        for (int r = 1; r < size; r++) {
+            MPI_Send(&job, sizeof(job), MPI_BYTE,
+                     r, MPI_JOB_TAG, MPI_COMM_WORLD);
+        }
 
-        MPI_Send(&job, sizeof(job), MPI_BYTE,
-                 0, MPI_JOB_TAG, MPI_COMM_WORLD);
+        /* Collect partial results */
+        double sum = 0.0;
+        for (int r = 1; r < size; r++) {
+            double partial;
+            MPI_Recv(&partial, 1, MPI_DOUBLE,
+                     r, MPI_RESULT_TAG,
+                     MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            sum += partial;
+        }
 
-        MPI_Recv(&shm->result, sizeof(result_packet_t), MPI_BYTE,
-                 0, MPI_RESULT_TAG,
-                 MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
+        /* Write result into shared memory */
+        shm->result.job_id = job.job_id;
+        shm->result.result = sum;
         shm->result_ready = 1;
     }
+
     return NULL;
 }

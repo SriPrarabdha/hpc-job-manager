@@ -17,6 +17,7 @@ scancel 82
 
 
 srun --nodes=2 --ntasks=2 --pty bash --norc --noprofile
+srun --nodelist=mpplabc34n-computenodeset-[0-1] --nodes=2 --ntasks=2 --pty bash --norc --noprofile
 bash-5.2$ srun --nodes=1 --ntasks=2 ./build/server &
 [1] 2116
 bash-5.2$ ss -lnt | grep 9090
